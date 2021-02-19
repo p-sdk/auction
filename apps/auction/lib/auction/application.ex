@@ -10,6 +10,8 @@ defmodule Auction.Application do
     children = [
       # Starts a worker by calling: Auction.Worker.start_link(arg)
       # {Auction.Worker, arg}
+      # Start the PubSub system
+      {Phoenix.PubSub, name: AuctionWeb.PubSub},
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
