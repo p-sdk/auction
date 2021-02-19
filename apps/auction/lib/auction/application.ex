@@ -12,6 +12,7 @@ defmodule Auction.Application do
       # {Auction.Worker, arg}
       # Start the PubSub system
       {Phoenix.PubSub, name: AuctionWeb.PubSub},
+      {Auction.Repo, []}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
