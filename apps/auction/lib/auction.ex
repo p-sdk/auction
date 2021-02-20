@@ -25,6 +25,11 @@ defmodule Auction do
 
   def delete_item(%Auction.Item{} = item), do: @repo.delete(item)
 
+  def edit_item(id) do
+    get_item(id)
+    |> Item.changeset()
+  end
+
   def update_item(%Auction.Item{} = item, updates) do
     item
     |> Item.changeset(updates)
