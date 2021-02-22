@@ -34,6 +34,12 @@ defmodule Auction do
     @repo.get_by(Item, attrs)
   end
 
+  def get_item_with_bids(id) do
+    id
+    |> get_item()
+    |> @repo.preload(bids: [:user])
+  end
+
   def new_item, do: Item.changeset(%Item{})
 
   def insert_item(attrs) do
