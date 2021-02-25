@@ -1,5 +1,5 @@
 defmodule Auction do
-  alias Auction.{Repo, Bid, Item, User, Password}
+  alias Auction.{Bid, Item, Password, Repo, User}
   import Ecto.Query
 
   @repo Repo
