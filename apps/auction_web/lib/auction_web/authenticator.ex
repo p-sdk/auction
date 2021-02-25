@@ -8,9 +8,10 @@ defmodule AuctionWeb.Authenticator do
       conn
       |> get_session(:user_id)
       |> case do
-           nil -> nil
-           id -> Auction.get_user(id)
-         end
+        nil -> nil
+        id -> Auction.get_user(id)
+      end
+
     assign(conn, :current_user, user)
   end
 end

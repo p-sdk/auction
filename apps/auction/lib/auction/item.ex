@@ -3,10 +3,10 @@ defmodule Auction.Item do
   import Ecto.Changeset
 
   schema "items" do
-    field :title, :string
-    field :description, :string
-    field :ends_at, :utc_datetime
-    has_many :bids, Auction.Bid
+    field(:title, :string)
+    field(:description, :string)
+    field(:ends_at, :utc_datetime)
+    has_many(:bids, Auction.Bid)
     timestamps()
   end
 
@@ -20,7 +20,7 @@ defmodule Auction.Item do
   end
 
   defp validate(:ends_at, ends_at_date) do
-	  case DateTime.compare(ends_at_date, DateTime.utc_now()) do
+    case DateTime.compare(ends_at_date, DateTime.utc_now()) do
       :lt -> [ends_at: "can't be in the past"]
       _ -> []
     end
