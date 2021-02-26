@@ -6,6 +6,34 @@ defmodule Auction do
 
   def get_user(id), do: @repo.get!(User, id)
 
+  @doc """
+  Retrieves a User from the database matching the provided username and password
+
+  ## Return values
+
+  Depending on what is found in the database, two different values could be
+  returned:
+
+  * an `Auction.User` struct: An `Auction.User` record was found that matched
+    the `username` and `password` that was provided.
+  * `false`: No `Auction.User` could be found with the provided `username` and
+    `password`.
+
+  You can then use the returned value to determine whether or not the User is
+  authorized in your application. If an `Auction.User` is _not_ found based on
+  `username`, the computational work of hashing a password is still done.
+
+  ## Examples
+
+      iex> insert_user(%{username: "geo", password: "example",
+      ...>   password_confirmation: "example", email_address: "test@example.com"})
+      ...> result = get_user_by_username_and_password("geo", "example")
+      ...> match?(%Auction.User{username: "geo"}, result)
+      true
+
+      iex> get_user_by_username_and_password("no user", "bad password")
+      false
+  """
   def get_user_by_username_and_password(username, password) do
     with user when not is_nil(user) <- @repo.get_by(User, %{username: username}),
          true <- Password.verify_with_hash(password, user.hashed_password) do
