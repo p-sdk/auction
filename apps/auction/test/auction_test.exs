@@ -52,5 +52,13 @@ defmodule AuctionTest do
     test "it returns an error on error" do
       assert {:error, _changeset} = Auction.insert_item(%{foo: :bar})
     end
+
+    test "an Item's ends_at date can't be in the past" do
+      title = "test item"
+      past_date = DateTime.add(DateTime.utc_now(), -5)
+      future_date = DateTime.add(DateTime.utc_now(), 5)
+      assert {:error, _item} = Auction.insert_item(%{title: title, ends_at: past_date})
+      assert {:ok, _item} = Auction.insert_item(%{title: title, ends_at: future_date})
+    end
   end
 end
