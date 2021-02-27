@@ -14,4 +14,4 @@ config :auction, Auction.Repo,
   port: "5432",
   pool: Ecto.Adapters.SQL.Sandbox
 
-config :logger, level: :info
+config :logger, level: :warn
