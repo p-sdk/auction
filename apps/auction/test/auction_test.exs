@@ -86,5 +86,13 @@ defmodule AuctionTest do
     test "it returns an error on error" do
       assert {:error, _changeset} = Auction.insert_bid(%{foo: :bar})
     end
+
+    test "only allow bids that have a higher amount than the current high bid", %{item: item, bidder: bidder} do
+      {:ok, other_bidder} = Repo.insert(%User{username: "other bidder"})
+      {:ok, _bid} = Auction.insert_bid(%{amount: 123, item_id: item.id, user_id: other_bidder.id})
+
+      assert {:error, _bid} = Auction.insert_bid(%{amount: 122, item_id: item.id, user_id: bidder.id})
+      assert {:ok, _bid} = Auction.insert_bid(%{amount: 124, item_id: item.id, user_id: bidder.id})
+    end
   end
 end
