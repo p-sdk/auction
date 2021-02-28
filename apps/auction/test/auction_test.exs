@@ -1,7 +1,7 @@
 defmodule AuctionTest do
   use ExUnit.Case
   import Ecto.Query
-  alias Auction.{Item, Repo}
+  alias Auction.{Bid, Item, Repo, User}
   doctest Auction, import: true
 
   setup do
@@ -59,6 +59,32 @@ defmodule AuctionTest do
       future_date = DateTime.add(DateTime.utc_now(), 5)
       assert {:error, _item} = Auction.insert_item(%{title: title, ends_at: past_date})
       assert {:ok, _item} = Auction.insert_item(%{title: title, ends_at: future_date})
+    end
+  end
+
+  describe "insert_bid/1" do
+    setup do
+      {:ok, item} = Repo.insert(%Item{title: "test item"})
+      {:ok, bidder} = Repo.insert(%User{username: "test bidder"})
+      %{item: item, bidder: bidder}
+    end
+
+    test "adds a Bid to the database", %{item: item, bidder: bidder} do
+      before_count = Repo.aggregate(Bid, :count)
+      {:ok, _bid} = Auction.insert_bid(%{amount: 123, item_id: item.id, user_id: bidder.id})
+      assert Repo.aggregate(Bid, :count) == before_count + 1
+    end
+
+    test "the Bid in the database has the attributes provided", %{item: item, bidder: bidder} do
+      attrs = %{amount: 123, item_id: item.id, user_id: bidder.id}
+      {:ok, bid} = Auction.insert_bid(attrs)
+      assert bid.amount == attrs.amount
+      assert bid.item_id == attrs.item_id
+      assert bid.user_id == attrs.user_id
+    end
+
+    test "it returns an error on error" do
+      assert {:error, _changeset} = Auction.insert_bid(%{foo: :bar})
     end
   end
 end
