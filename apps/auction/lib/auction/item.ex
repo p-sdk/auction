@@ -13,7 +13,7 @@ defmodule Auction.Item do
   def changeset(item, params \\ %{}) do
     item
     |> cast(params, [:title, :description, :ends_at])
-    |> validate_required(:title)
+    |> validate_required([:title, :ends_at])
     |> validate_length(:title, min: 3)
     |> validate_length(:description, max: 200)
     |> validate_change(:ends_at, &validate/2)

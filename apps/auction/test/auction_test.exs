@@ -9,6 +9,9 @@ defmodule AuctionTest do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(Repo)
   end
 
+  @past_datetime DateTime.add(DateTime.utc_now(), -1000)
+  @future_datetime DateTime.add(DateTime.utc_now(), 1000)
+
   describe "list_items/0" do
     test "returns all Items in the database" do
       items = insert_list(3, :item)
@@ -30,12 +33,16 @@ defmodule AuctionTest do
     test "adds an Item to the database" do
       count_query = from(i in Item, select: count(i.id))
       before_count = Repo.one(count_query)
-      {:ok, _item} = Auction.insert_item(%{title: "test item"})
+      {:ok, _item} = Auction.insert_item(%{title: "test item", ends_at: @future_datetime})
       assert Repo.one(count_query) == before_count + 1
     end
 
     test "the Item in the database has the attributes provided" do
-      attrs = %{title: "test item", description: "test description"}
+      attrs = %{
+        title: "test item",
+        description: "test description",
+        ends_at: @future_datetime
+      }
       {:ok, item} = Auction.insert_item(attrs)
       assert item.title == attrs.title
       assert item.description == attrs.description
@@ -47,10 +54,8 @@ defmodule AuctionTest do
 
     test "an Item's ends_at date can't be in the past" do
       title = "test item"
-      past_date = DateTime.add(DateTime.utc_now(), -5)
-      future_date = DateTime.add(DateTime.utc_now(), 5)
-      assert {:error, _item} = Auction.insert_item(%{title: title, ends_at: past_date})
-      assert {:ok, _item} = Auction.insert_item(%{title: title, ends_at: future_date})
+      assert {:error, _item} = Auction.insert_item(%{title: title, ends_at: @past_datetime})
+      assert {:ok, _item} = Auction.insert_item(%{title: title, ends_at: @future_datetime})
     end
   end
 

@@ -3,7 +3,8 @@ defmodule Auction.Factory do
 
   def item_factory do
     %Auction.Item{
-      title: sequence(:title, &"Item #{&1}")
+      title: sequence(:title, &"Item #{&1}"),
+      ends_at: DateTime.add(DateTime.utc_now(), 1000)
     }
   end
 
