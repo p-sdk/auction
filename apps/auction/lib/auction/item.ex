@@ -25,4 +25,9 @@ defmodule Auction.Item do
       _ -> []
     end
   end
+
+  def expired?(item) do
+    validate(:ends_at, item.ends_at)
+    |> Enum.any?()
+  end
 end

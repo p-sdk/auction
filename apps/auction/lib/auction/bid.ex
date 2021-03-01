@@ -16,7 +16,24 @@ defmodule Auction.Bid do
     |> validate_required([:amount, :user_id, :item_id])
     |> assoc_constraint(:item)
     |> assoc_constraint(:user)
+    |> validate_item_is_active()
     |> validate_amount_higher_than_current_high_bid()
+  end
+
+  defp validate_item_is_active(changeset) do
+    item_id = get_field(changeset, :item_id)
+
+    with {:is_valid, true} <- {:is_valid, changeset.valid?},
+         %Auction.Item{} = item <- Auction.Repo.get(Auction.Item, item_id),
+         false <- Auction.Item.expired?(item) do
+      changeset
+    else
+      {:is_valid, false} ->
+        changeset
+
+      _ ->
+        add_error(changeset, :item_id, "must be active")
+    end
   end
 
   defp validate_amount_higher_than_current_high_bid(changeset) do

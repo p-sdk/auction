@@ -91,5 +91,12 @@ defmodule AuctionTest do
       assert {:error, _bid} = Auction.insert_bid(%{amount: 122, item_id: item.id, user_id: bidder.id})
       assert {:ok, _bid} = Auction.insert_bid(%{amount: 124, item_id: item.id, user_id: bidder.id})
     end
+
+    test "don't allow bids on items after the item's ends_at datetime have passed", %{item: active_item, bidder: bidder} do
+      expired_item = insert(:item, ends_at: @past_datetime)
+
+      assert {:error, _bid} = Auction.insert_bid(%{amount: 123, item_id: expired_item.id, user_id: bidder.id})
+      assert {:ok, _bid} = Auction.insert_bid(%{amount: 123, item_id: active_item.id, user_id: bidder.id})
+    end
   end
 end
