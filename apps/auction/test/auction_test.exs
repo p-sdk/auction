@@ -1,7 +1,8 @@
 defmodule AuctionTest do
   use ExUnit.Case
   import Ecto.Query
-  alias Auction.{Bid, Item, Repo, User}
+  import Auction.Factory
+  alias Auction.{Bid, Item, Repo}
   doctest Auction, import: true
 
   setup do
@@ -9,27 +10,18 @@ defmodule AuctionTest do
   end
 
   describe "list_items/0" do
-    setup do
-      {:ok, item1} = Repo.insert(%Item{title: "Item 1"})
-      {:ok, item2} = Repo.insert(%Item{title: "Item 2"})
-      {:ok, item3} = Repo.insert(%Item{title: "Item 3"})
-      %{items: [item1, item2, item3]}
-    end
+    test "returns all Items in the database" do
+      items = insert_list(3, :item)
 
-    test "returns all Items in the database", %{items: items} do
       assert items == Auction.list_items()
     end
   end
 
   describe "get_item/1" do
-    setup do
-      {:ok, item1} = Repo.insert(%Item{title: "Item 1"})
-      {:ok, item2} = Repo.insert(%Item{title: "Item 2"})
-      %{items: [item1, item2]}
-    end
-
-    test "returns a single Item based on id", %{items: items} do
+    test "returns a single Item based on id" do
+      items = insert_pair(:item)
       item = Enum.at(items, 1)
+
       assert item == Auction.get_item(item.id)
     end
   end
@@ -64,8 +56,8 @@ defmodule AuctionTest do
 
   describe "insert_bid/1" do
     setup do
-      {:ok, item} = Repo.insert(%Item{title: "test item"})
-      {:ok, bidder} = Repo.insert(%User{username: "test bidder"})
+      item = insert(:item)
+      bidder = insert(:user)
       %{item: item, bidder: bidder}
     end
 
@@ -88,7 +80,7 @@ defmodule AuctionTest do
     end
 
     test "only allow bids that have a higher amount than the current high bid", %{item: item, bidder: bidder} do
-      {:ok, other_bidder} = Repo.insert(%User{username: "other bidder"})
+      other_bidder = insert(:user)
       {:ok, _bid} = Auction.insert_bid(%{amount: 123, item_id: item.id, user_id: other_bidder.id})
 
       assert {:error, _bid} = Auction.insert_bid(%{amount: 122, item_id: item.id, user_id: bidder.id})

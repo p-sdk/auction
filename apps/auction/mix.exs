@@ -28,6 +28,7 @@ defmodule Auction.MixProject do
   defp deps do
     [
       {:ecto_sql, "~> 3.5"},
+      {:ex_machina, "~> 2.6"},
       {:postgrex, "~> 0.15.8"},
       {:pbkdf2_elixir, "~> 1.3"},
       {:phoenix_pubsub, "~> 2.0"}
