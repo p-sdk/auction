@@ -1,5 +1,6 @@
 defmodule AuctionWeb.ItemController do
   use AuctionWeb, :controller
+  plug Plugs.RequireLoggedInUser when action in [:new, :create, :edit, :update]
 
   def index(conn, _params) do
     items = Auction.list_items()

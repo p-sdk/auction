@@ -22,6 +22,10 @@ defmodule AuctionWeb.ItemControllerTest do
       }
     }
 
+    setup %{conn: conn} do
+      [conn: sign_in(conn)]
+    end
+
     test "with valid params, creates a new Item", %{conn: conn} do
       before_count = Enum.count(Auction.list_items())
       post conn, "/items", @valid_params
@@ -42,6 +46,24 @@ defmodule AuctionWeb.ItemControllerTest do
     test "with invalid params, shows the new Item form", %{conn: conn} do
       conn = post conn, "/items", %{"item" => %{"bad_param" => "Item 1"}}
       assert html_response(conn, 200) =~ "<h1>New Item</h1>"
+    end
+
+    test "don't allow the creation of an item if a user is not logged in", %{conn: conn} do
+      before_count = Enum.count(Auction.list_items())
+
+      conn
+      |> delete("/logout")
+      |> post("/items", @valid_params)
+
+      assert Enum.count(Auction.list_items()) == before_count
+    end
+
+    def sign_in(conn) do
+      user = insert(:user)
+
+      post conn, "/login", %{
+        "user" => %{"username" => user.username, "password" => user.password}
+      }
     end
   end
 end
