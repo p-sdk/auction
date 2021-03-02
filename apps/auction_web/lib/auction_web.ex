@@ -24,6 +24,7 @@ defmodule AuctionWeb do
       import Plug.Conn
       import AuctionWeb.Gettext
       alias AuctionWeb.Router.Helpers, as: Routes
+      alias AuctionWeb.Plugs
     end
   end
 
