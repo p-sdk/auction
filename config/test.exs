@@ -15,3 +15,6 @@ config :auction, Auction.Repo,
   pool: Ecto.Adapters.SQL.Sandbox
 
 config :logger, level: :warn
+
+config :pbkdf2_elixir,
+  rounds: 1

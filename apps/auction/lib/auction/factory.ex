@@ -10,7 +10,9 @@ defmodule Auction.Factory do
 
   def user_factory do
     %Auction.User{
-      username: sequence(:username, &"User #{&1}")
+      username: sequence(:username, &"User #{&1}"),
+      password: "foobar",
+      hashed_password: Auction.Password.hash("foobar")
     }
   end
 end
