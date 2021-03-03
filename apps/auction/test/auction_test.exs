@@ -30,19 +30,28 @@ defmodule AuctionTest do
   end
 
   describe "insert_item/1" do
-    test "adds an Item to the database" do
+    setup do
+      owner = insert(:user)
+
+      valid_params = %{
+        title: "test item",
+        description: "test description",
+        ends_at: @future_datetime,
+        user_id: owner.id
+      }
+
+      [valid_params: valid_params]
+    end
+
+    test "adds an Item to the database", %{valid_params: valid_params} do
       count_query = from(i in Item, select: count(i.id))
       before_count = Repo.one(count_query)
-      {:ok, _item} = Auction.insert_item(%{title: "test item", ends_at: @future_datetime})
+      {:ok, _item} = Auction.insert_item(valid_params)
       assert Repo.one(count_query) == before_count + 1
     end
 
-    test "the Item in the database has the attributes provided" do
-      attrs = %{
-        title: "test item",
-        description: "test description",
-        ends_at: @future_datetime
-      }
+    test "the Item in the database has the attributes provided", %{valid_params: valid_params} do
+      attrs = valid_params
       {:ok, item} = Auction.insert_item(attrs)
       assert item.title == attrs.title
       assert item.description == attrs.description
@@ -52,10 +61,10 @@ defmodule AuctionTest do
       assert {:error, _changeset} = Auction.insert_item(%{foo: :bar})
     end
 
-    test "an Item's ends_at date can't be in the past" do
-      title = "test item"
-      assert {:error, _item} = Auction.insert_item(%{title: title, ends_at: @past_datetime})
-      assert {:ok, _item} = Auction.insert_item(%{title: title, ends_at: @future_datetime})
+    test "an Item's ends_at date can't be in the past", %{valid_params: valid_params} do
+      attrs = valid_params
+      assert {:error, _item} = Auction.insert_item(%{attrs | ends_at: @past_datetime})
+      assert {:ok, _item} = Auction.insert_item(%{attrs | ends_at: @future_datetime})
     end
   end
 

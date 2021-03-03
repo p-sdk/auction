@@ -14,7 +14,7 @@ defmodule Auction.Item do
   def changeset(item, params \\ %{}) do
     item
     |> cast(params, [:title, :description, :ends_at, :user_id])
-    |> validate_required([:title, :ends_at])
+    |> validate_required([:title, :ends_at, :user_id])
     |> assoc_constraint(:user)
     |> validate_length(:title, min: 3)
     |> validate_length(:description, max: 200)
