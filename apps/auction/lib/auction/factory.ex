@@ -1,6 +1,14 @@
 defmodule Auction.Factory do
   use ExMachina.Ecto, repo: Auction.Repo
 
+  def bid_factory do
+    %Auction.Bid{
+      amount: :rand.uniform(1000),
+      item: build(:item),
+      user: build(:user)
+    }
+  end
+
   def item_factory do
     %Auction.Item{
       title: sequence(:title, &"Item #{&1}"),
