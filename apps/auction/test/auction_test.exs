@@ -16,7 +16,7 @@ defmodule AuctionTest do
     test "returns all Items in the database" do
       items = insert_list(3, :item)
 
-      assert items == Auction.list_items()
+      assert Enum.map(items, &{&1.id, &1.title}) == Enum.map(Auction.list_items(), &{&1.id, &1.title})
     end
   end
 
@@ -25,7 +25,7 @@ defmodule AuctionTest do
       items = insert_pair(:item)
       item = Enum.at(items, 1)
 
-      assert item == Auction.get_item(item.id)
+      assert item.title == Auction.get_item(item.id).title
     end
   end
 
