@@ -3,6 +3,8 @@ defmodule Auction.Bid do
   import Ecto.Changeset
   import Ecto.Query
 
+  @timestamps_opts [type: :utc_datetime_usec]
+
   schema "bids" do
     field(:amount, :integer)
     belongs_to(:item, Auction.Item)
