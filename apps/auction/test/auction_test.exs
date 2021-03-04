@@ -29,6 +29,23 @@ defmodule AuctionTest do
     end
   end
 
+  test "get_item_with_bids/1" do
+    [item1, item2] = insert_pair(:item)
+    [user1, user2] = insert_pair(:user)
+    b1 = insert(:bid, item: item1, user: user1)
+    b2 = insert(:bid, item: item1, user: user2)
+    b3 = insert(:bid, item: item2, user: user1)
+    b4 = insert(:bid, item: item2, user: user2)
+    b5 = insert(:bid, item: item1, user: user1)
+    b6 = insert(:bid, item: item1, user: user2)
+
+    assert %Item{} = item1_with_bids = Auction.get_item_with_bids(item1.id)
+    assert %Item{} = item2_with_bids = Auction.get_item_with_bids(item2.id)
+
+    assert bid_tuples(item1_with_bids.bids) == bid_tuples([b6, b5, b2, b1])
+    assert bid_tuples(item2_with_bids.bids) == bid_tuples([b4, b3])
+  end
+
   describe "insert_item/1" do
     setup do
       owner = insert(:user)
