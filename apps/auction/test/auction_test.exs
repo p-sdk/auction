@@ -108,4 +108,24 @@ defmodule AuctionTest do
       assert {:ok, _bid} = Auction.insert_bid(%{amount: 123, item_id: active_item.id, user_id: bidder.id})
     end
   end
+
+  test "get_bids_for_user/1" do
+    [item1, item2] = insert_pair(:item)
+    [user1, user2] = insert_pair(:user)
+    b1 = insert(:bid, item: item1, user: user1)
+    b2 = insert(:bid, item: item1, user: user2)
+    b3 = insert(:bid, item: item2, user: user1)
+    b4 = insert(:bid, item: item2, user: user2)
+    b5 = insert(:bid, item: item1, user: user1)
+    b6 = insert(:bid, item: item1, user: user2)
+
+    user1_bids = Auction.get_bids_for_user(user1)
+    user2_bids = Auction.get_bids_for_user(user2)
+
+    assert bid_tuples(user1_bids) == bid_tuples([b5, b3, b1])
+    assert bid_tuples(user2_bids) == bid_tuples([b6, b4, b2])
+  end
+
+  defp bid_tuple(bid), do: {bid.id, bid.amount}
+  defp bid_tuples(bids), do: Enum.map(bids, &bid_tuple/1)
 end
