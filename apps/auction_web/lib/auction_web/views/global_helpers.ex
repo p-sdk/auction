@@ -7,4 +7,10 @@ defmodule AuctionWeb.GlobalHelpers do
 
     "$#{dollars_and_cents}"
   end
+
+  def format_timestamp(timestamp, timezone) do
+    timestamp
+    |> DateTime.shift_zone!(timezone)
+    |> Calendar.strftime("%Y-%m-%d %H:%M:%S")
+  end
 end
