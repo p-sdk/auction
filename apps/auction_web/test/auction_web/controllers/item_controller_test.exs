@@ -62,7 +62,11 @@ defmodule AuctionWeb.ItemControllerTest do
       user = insert(:user)
 
       post conn, "/login", %{
-        "user" => %{"username" => user.username, "password" => user.password}
+        "user" => %{
+          "username" => user.username,
+          "password" => user.password,
+          "timezone" => "Europe/Warsaw"
+        }
       }
     end
   end

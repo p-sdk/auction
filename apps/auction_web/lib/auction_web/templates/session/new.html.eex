@@ -7,6 +7,8 @@
   <%= label f, :password %>
   <%= password_input f, :password %>
 
+  <%= hidden_input f, :timezone %>
+
   <div>
     <%= submit "Submit" %>
   </div>

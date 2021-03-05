@@ -5,11 +5,12 @@ defmodule AuctionWeb.SessionController do
     render(conn, "new.html")
   end
 
-  def create(conn, %{"user" => %{"username" => username, "password" => password}}) do
+  def create(conn, %{"user" => %{"username" => username, "password" => password, "timezone" => timezone}}) do
     case Auction.get_user_by_username_and_password(username, password) do
       %Auction.User{} = user ->
         conn
         |> put_session(:user_id, user.id)
+        |> put_session(:timezone, timezone)
         |> put_flash(:info, "Successfully logged in")
         |> redirect(to: Routes.user_path(conn, :show, user))
 
